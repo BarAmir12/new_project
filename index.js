@@ -30,6 +30,13 @@ app.use(
   )
 )
 
+// נקודת קצה לדף הבית
+app.get('/', (req, res) => {
+  res.send(
+    '<h1>Welcome to the Phonebook API</h1><p>Use /api/persons to access the data.</p>'
+  )
+})
+
 // נקודת קצה שמחזירה את כל האנשים
 app.get('/api/persons', (req, res) => {
   res.json(persons)
