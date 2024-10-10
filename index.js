@@ -1,6 +1,10 @@
 const express = require('express')
 const app = express()
-const PORT = 3001
+const morgan = require('morgan')
+const cors = require('cors')
+
+// השתמש במשתנה סביבה עבור הפורט במקרה והוא זמין
+const PORT = process.env.PORT || 3001
 
 let persons = [
   { id: '1', name: 'Arto Hellas', number: '040-123456' },
@@ -9,9 +13,13 @@ let persons = [
   { id: '4', name: 'Mary Poppendieck', number: '39-23-6423122' },
 ]
 
-const morgan = require('morgan')
-const cors = require('cors')
+// אפשר שימוש ב-CORS
+app.use(cors())
 
+// אפשר עיבוד של JSON בבקשות POST
+app.use(express.json())
+
+// הגדר את ה-morgan לוגים עם טוקן מותאם
 morgan.token('post-data', (req) => {
   return req.method === 'POST' ? JSON.stringify(req.body) : ''
 })
@@ -22,9 +30,12 @@ app.use(
   )
 )
 
+// נקודת קצה שמחזירה את כל האנשים
 app.get('/api/persons', (req, res) => {
   res.json(persons)
 })
+
+// נקודת קצה שמחזירה מידע כללי
 app.get('/info', (req, res) => {
   const currentTime = new Date()
   const response = `
@@ -33,6 +44,8 @@ app.get('/info', (req, res) => {
     `
   res.send(response)
 })
+
+// נקודת קצה שמחזירה מידע על אדם לפי ID
 app.get('/api/persons/:id', (req, res) => {
   const id = req.params.id
   const person = persons.find((p) => p.id === id)
@@ -43,14 +56,16 @@ app.get('/api/persons/:id', (req, res) => {
     res.status(404).json({ error: 'Person not found' })
   }
 })
+
+// נקודת קצה שמוחקת אדם לפי ID
 app.delete('/api/persons/:id', (req, res) => {
   const id = req.params.id
   persons = persons.filter((p) => p.id !== id)
 
   res.status(204).end()
 })
-app.use(express.json())
 
+// נקודת קצה שמוסיפה אדם חדש
 app.post('/api/persons', (req, res) => {
   const body = req.body
 
@@ -73,6 +88,7 @@ app.post('/api/persons', (req, res) => {
   res.json(newPerson)
 })
 
+// הפעלת השרת
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
