@@ -14,3 +14,8 @@ content-type: application/json
     "number": "123-456789"
 }
 
+####
+
+GET https://new-project-9tkw.onrender.com/api/persons
+
+
